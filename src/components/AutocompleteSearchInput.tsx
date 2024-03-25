@@ -12,7 +12,9 @@ export default function AutoCompleteSearchInput() {
   const [results, setResults] = useState<User[]>([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState(-1);
   const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
+    //getting an array of Star Wars characters as the data to use
     const fetchUser = async () => {
       const res = await fetch(apiUrl ?? "");
       const data = await res.json();
@@ -21,6 +23,7 @@ export default function AutoCompleteSearchInput() {
     fetchUser();
   }, []);
 
+  //filters the data based on what we search for
   const handleSearch = async (event: ChangeEvent<HTMLInputElement>) => {
     setNewSearch(event.target.value);
 
@@ -31,6 +34,7 @@ export default function AutoCompleteSearchInput() {
     );
   };
 
+  //handling keyboard support
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowUp") {
       setSelectedUserIndex((prevIndex) =>
@@ -40,9 +44,9 @@ export default function AutoCompleteSearchInput() {
       setSelectedUserIndex((prevIndex) =>
         prevIndex === results.length - 1 ? -1 : prevIndex + 1
       );
-    } else if (event.key === "Enter") {
+    } else if (event.key === "Enter" && selectedUserIndex !== -1) {
       event.preventDefault();
-      if (selectedUserIndex !== -1) {
+      if (results.length > 0) {
         const selectedUser = results[selectedUserIndex];
         setNewSearch(selectedUser.name);
         setResults([]);
@@ -50,8 +54,15 @@ export default function AutoCompleteSearchInput() {
     }
   };
 
+  //handling mouse click
   const handleUserClick = (user: User) => {
     setNewSearch(user.name);
+    setResults([]);
+  };
+
+  // button to reset the search
+  const cleanHandler = () => {
+    setNewSearch("");
     setResults([]);
   };
 
@@ -69,10 +80,11 @@ export default function AutoCompleteSearchInput() {
           users={results}
           selectedUserIndex={selectedUserIndex}
           handleUserClick={handleUserClick}
+          newSearch={newSearch}
         />
       )}
 
-      <button> Select </button>
+      <button onClick={cleanHandler}> Clean </button>
     </form>
   );
 }

@@ -55,6 +55,10 @@ button {
   background-color: #fffbf4;
 }
 
+.user_item.active {
+  background-color: #fffbf4;
+}
+
 @media (max-width: 590px) {
   form {
     padding: 20px;
